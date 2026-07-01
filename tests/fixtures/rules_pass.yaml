@@ -1,0 +1,23 @@
+rules:
+- id: revenues_positive
+  type: range_bound
+  range: Rules!A1:A5
+  min: 80
+- id: no_formula_errors
+  type: no_error
+  range: Rules!F1
+- id: no_hardcoded_drivers
+  type: no_hardcode_in_range
+  range: Rules!D1:D5
+- id: total_ties_sum
+  type: totals_tie
+  total_cell: Rules!B1
+  sum_range: Rules!A1:A5
+  tolerance: 0.01
+- id: revenues_increasing
+  type: monotonic
+  range: Rules!A1:A5
+  direction: increasing
+- id: gross_profit_nonneg
+  type: relationship
+  expression: Rules!C1 >= 0

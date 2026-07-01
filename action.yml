@@ -1,0 +1,62 @@
+name: "TestSheet — Excel Regression Gate"
+description: "Run TestSheet against an Excel workbook and fail the workflow on drift or rule violations."
+author: "TestSheet"
+
+inputs:
+  workbook:
+    description: "Path to the workbook to test (relative to repo root)."
+    required: true
+  evaluator:
+    description: "Evaluator to use: 'formulas' (default, pure-Python) or 'libreoffice'."
+    required: false
+    default: "formulas"
+  junit-output:
+    description: "Path for JUnit XML report (uploaded as artifact)."
+    required: false
+    default: "testsheet-report.xml"
+  html-output:
+    description: "Path for HTML report (uploaded as artifact)."
+    required: false
+    default: "testsheet-report.html"
+  python-version:
+    description: "Python version to use."
+    required: false
+    default: "3.11"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install LibreOffice (if selected)
+      if: inputs.evaluator == 'libreoffice'
+      shell: bash
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y libreoffice --no-install-recommends
+
+    - name: Install TestSheet
+      shell: bash
+      run: |
+        pip install testsheet${{ inputs.evaluator == 'libreoffice' && '[libreoffice]' || '' }}
+
+    - name: Run TestSheet
+      shell: bash
+      run: |
+        testsheet run "${{ inputs.workbook }}" \
+          --evaluator "${{ inputs.evaluator }}" \
+          --junit "${{ inputs.junit-output }}" \
+          --html  "${{ inputs.html-output }}"
+
+    - name: Upload reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: testsheet-reports
+        path: |
+          ${{ inputs.junit-output }}
+          ${{ inputs.html-output }}
+        if-no-files-found: ignore
