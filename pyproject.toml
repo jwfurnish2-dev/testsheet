@@ -38,9 +38,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jwfurnish/testsheet"
-Repository = "https://github.com/jwfurnish/testsheet"
-"Bug Tracker" = "https://github.com/jwfurnish/testsheet/issues"
+Homepage = "https://github.com/jwfurnish2-dev/testsheet"
+Repository = "https://github.com/jwfurnish2-dev/testsheet"
+"Bug Tracker" = "https://github.com/jwfurnish2-dev/testsheet/issues"
 
 [project.optional-dependencies]
 pycel = [
